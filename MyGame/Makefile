@@ -1,4 +1,3 @@
-# Directories
 SRC_DIR := src
 INC_DIR := include
 BUILD_DIR := ./build
@@ -16,7 +15,11 @@ OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
 EXEC := MyGame
 
 # Targets
-all: $(EXEC)
+all: prep $(EXEC)
+
+prep:
+	rm -rf $(BUILD_DIR)
+	mkdir -p $(BUILD_DIR)
 
 $(EXEC): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(INC) $^ -o $@
@@ -24,10 +27,8 @@ $(EXEC): $(OBJS)
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $(INC) -c $< -o $@
 
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
-
 clean:
 	rm -f $(EXEC) $(BUILD_DIR)/*.o
+	rm -rf $(BUILD_DIR)
 
-.PHONY: all clean
+.PHONY: all clean prep

@@ -8,14 +8,14 @@ public:
 
     enum SPACE{local = 0, world = 1};
 
-private: // was private
+private:
 
     Vector2 mPos;
     float mRotation;
     Vector2 mScale;
 
     bool mActive;
-    GameEntity * mParent; // One Game Entity is a child of another Game Entity use:
+    GameEntity * mParent; // One Game Entity is a child of another Game Entity
 
 public:
 

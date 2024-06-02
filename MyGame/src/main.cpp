@@ -5,5 +5,5 @@ int main(int  argc, char * argv[]){
     Game->Run();
 
     GameManager::Release();
-    Game = NULL;
+    Game = nullptr;
 }

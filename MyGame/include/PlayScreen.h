@@ -6,31 +6,59 @@
 #include "Enemy.h"
 
 class PlayScreen : public GameEntity{
+public:
+
+    Player * mPlayer;
+
 private:
 
     InputManager * mInput;
-    
-    GameEntity * mBackGround;
-    std::unique_ptr<Texture> mCosmos;
 
-    std::unique_ptr<Player> mPlayer;
-    //std::unique_ptr<Boss> mBoss;
-    Enemy * mEnemy;
+    GameEntity * mTopBar;
+    Texture * mScoreTex;
+    Texture * mPointsTex;
+    Texture * mHPTex;
+    Texture * mHPBar;
+
+    GameEntity * mBackGround;
+    Texture * mCosmos;
+
+    unsigned int mScore;
+
+    Vector2 mHP;
+    Vector2 newPos;
+    
+    int MAX_COLUMNS = 7;
+    int MAX_ROWS = 3;
+    std::vector<std::vector<Enemy *>> mEnemy;
+    
     //
 public:
 
     PlayScreen();
     ~PlayScreen();
 
-    // int SelectedMode();
-    // void ChangeMode(int mode);
-    void HandleBossCollision();
-    void HandlePlayerCollision();
+    int GetScore();
+    void UpdateScore(unsigned int score);
+    void Reset();
     void Update();
     void Render();
 
+private:
+
+    void HandleEnemyCollision();
+    void HandlePlayerCollision();
+    void EnemyFormation();
+
+    void UnexpectedAttack();
+    void SamuelsSpear();
+    void Flood();
+    void Annihilation();
+    
+    void GodHasSinned();
+
+    int ProbabilityCalc();
+
 };
-
-
 
 #endif

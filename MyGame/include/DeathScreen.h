@@ -3,8 +3,6 @@
 
 #include "InputManager.h"
 #include "Texture.h"
-#include <memory>
-//#include "Enemy.h"
 
 class DeathScreen : public GameEntity{
 private:
@@ -12,15 +10,24 @@ private:
     InputManager * mInput;
     
     GameEntity * mDeathSurface;
+    Texture * mBackground;
     Texture * mDeath;
 
-    //Enemy * mEnemy;
-    //
+    Texture * mRestart;
+    Texture * mMenu;
+    Texture * mCursor;
+
+    Vector2 mCursorStart;
+    Vector2 mCursorOffset;
+
+    int SelectMode;
+
 public:
 
     DeathScreen();
     ~DeathScreen();
-
+    int SelectedMode();
+    void ChangeMode(int mode);
     void Update();
     void Render();
 

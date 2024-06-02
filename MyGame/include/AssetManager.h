@@ -2,8 +2,8 @@
 #define ASSETMANAGER_H_
 
 #include "Graphics.h"
-#include <map>
 #include <SDL2/SDL_mixer.h>
+#include <map>
 
 class AssetManager{
 private:

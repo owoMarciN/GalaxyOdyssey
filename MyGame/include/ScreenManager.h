@@ -3,19 +3,25 @@
 
 #include "StartScreen.h"
 #include "PlayScreen.h"
-//#include "DeathScreen.h"
+#include "DeathScreen.h"
+#include <fstream>
 
 class ScreenManager{
-private:
+public:
 
-    enum SCREENS{START = 0, PLAY, DEATH};
+    enum SCREENS{START = 0, PLAY, SCOREBOARD, DEATH};
     SCREENS mCurrentScreen;
+    
+private:
 
     static ScreenManager * sInstance;
     InputManager * mInput;
+    AudioManager * mAudioMgr;
     StartScreen * mStartScreen;
     PlayScreen * mPlayScreen;
-    //DeathScreen * mDeathScreen;
+    DeathScreen * mDeathScreen;
+
+    std::string mScoreFile;
     
 public:
 
@@ -29,6 +35,9 @@ private:
 
     ScreenManager();
     ~ScreenManager();
+
+    void SBUpdate(int newScore);
+    void CleanFileBuffer(std::fstream mFile);
 
 };
 

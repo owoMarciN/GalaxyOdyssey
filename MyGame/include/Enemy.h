@@ -6,16 +6,22 @@
 #include "Bullets.h"
 
 class Enemy : public GameEntity{
+public:
+
+    enum STATES{FLY, FORMATION, DEAD};
+    enum ENEMYTYPES{ALPHA, BETA, BOSS};
+
 private:
 
     static std::vector<std::vector<Vector2>> sPaths;
-
-    enum STATES{FLY, FORMATION, DIVE, DEAD};
+    static unsigned int sPathsNumber;
 
     Timer * mTimer;
 
     Texture * mTexture;
     STATES mCurrState;
+
+    Vector2 mPlayerPos;
 
     unsigned int mCurrPath;
     unsigned int mCurrWayPoint;
@@ -24,32 +30,47 @@ private:
     float mSpeed;
 
     Uint32 mLastFiredTime = 0;  // Time when the last bullet was fired
-    const Uint32 mFireDelay = 500;
+    const Uint32 mFireDelay = 700;
 
 public:
 
+    ENEMYTYPES mType;
     int mHP;
-    int mDamage;
+    unsigned int mScore;
+    bool mInPosition;
+    bool mNoCollisions;
+
+    void GetPlayerPos(Vector2 pos);
 
     static const int MAX_BULLETS = 3;
-    std::unique_ptr<Bullet[]> mBullet;
+    std::vector<Bullet*> mBullet;
 
-public:
-
-    static void createPaths();
-
-    Enemy(int path);
-    virtual ~Enemy();
+protected:
 
     virtual void HandleFlyState();
     virtual void HandleFormationState();
-    virtual void HandleDiveState();
     virtual void HandleDeadState();
-    void HandleMovement();
+    void HandleStates();
+
+public:
+
+    static void createPaths(Vector2 vec1, Vector2 vec2, Vector2 vec3, Vector2 vec4, int samples);
+
+    Enemy(int path, ENEMYTYPES mEnemy = ALPHA);
+    virtual ~Enemy();
+
     void HandleFiring();
 
-    void HandleStates();
     void LoseHP(int change);
+
+    void InPosition(bool inPos);
+    bool InPosition();
+
+    void NoCollisions(bool noCol);
+    bool NoCollisions();
+
+    STATES currState();
+
     void Update();
     void Render();
 

@@ -2,6 +2,7 @@
 #define PLAYER_H_
 
 #include "InputManager.h"
+#include "AudioManager.h"
 #include "Bullets.h"
 
 class Player : public GameEntity{
@@ -9,28 +10,26 @@ private:
 
     Timer * mTimer;
     InputManager * mInput;
+    AudioManager * mAudio;
     /////
     Texture *  mShip;
     float mSpeed;
 
     Uint32 mLastFiredTime = 0;  // Time when the last bullet was fired
     const Uint32 mFireDelay = 400;
+    const Uint32 mFireSpecialDelay = 2000;
 
 public:
 
     static const int MAX_BULLETS = 3;
-    std::unique_ptr<Bullet[]> mBullet;
+    std::vector<Bullet*> mBullet;
 
-    std::unique_ptr<Bullet> mSpecialAttack;
-
-    int mScore;
-
-    //AudioManager * mAudio;
+    Bullet * mSpecialAttack;
+    // AudioManager * mAudioMgr;
     
 public:
 
     int mHP;
-    int mDamage;
     
 private:
 
@@ -41,9 +40,7 @@ public:
 
     Player();
     ~Player();
-    int Score();
     void LoseHP(int change);
-    void AddScore(int change);
     void Update();
     void Render();
 

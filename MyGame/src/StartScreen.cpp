@@ -4,63 +4,54 @@ StartScreen::StartScreen(){
 
     mInput = InputManager::Instance();
 
-    mTopBar = new GameEntity(Vector2(Graphics::Instance()->SCREEN_WIDTH*0.5f, 80.0f));
-    mPlayerOne = new Texture("1UP", "Karmatic_Arcade.ttf", 32, {200, 0, 0});
-    mHiScore = new Texture("HI-SCORE", "Karmatic_Arcade.ttf", 32, {200, 0, 0});
-    mPlayerTwo = new Texture("2UP", "Karmatic_Arcade.ttf", 32, {200, 0, 0});
-
-    mPlayerOne->Parent(mTopBar);
-    mHiScore->Parent(mTopBar);
-    mPlayerTwo->Parent(mTopBar);
-
-    mPlayerOne->Pos(Vector2(-Graphics::Instance()->SCREEN_WIDTH*0.35f, 0.0f));
-    mHiScore->Pos(Vector2(-10.0f, 0.0f));
-    mPlayerTwo->Pos(Vector2(Graphics::Instance()->SCREEN_WIDTH*0.35f, 0.0f));
-
-    mTopBar->Parent(this);  
+    mTopBar = new GameEntity(Vector2(Graphics::Instance()->SCREEN_WIDTH*0.5f, Graphics::Instance()->SCREEN_HEIGHT*0.35f));
+    mTitle = new Texture("TerraFormers", "Arcades.ttf", 72, {230,230,230});
+    mTitle->Parent(mTopBar);
+    mTitle->Pos(VEC2_ZERO);
+    mTopBar->Parent(this);
 
     mPlay = new GameEntity(Vector2(Graphics::Instance()->SCREEN_WIDTH*0.5f, Graphics::Instance()->SCREEN_HEIGHT*0.55f));  
-    mPlayButton = new Texture("PLAY", "Karmatic_Arcade.ttf", 32, color);
-    mExitButton = new Texture("EXIT", "Karmatic_Arcade.ttf", 32, color);
-    mCursor = new Texture("--", "Karmatic_Arcade.ttf", 32, color);
+    mPlayButton = new Texture("PLAY", "Karmatic_Arcade.ttf", 32, {230,230,230});
+    mScoreBoard = new Texture("SCORE", "Karmatic_Arcade.ttf", 32, {230,230,230});
+    mExitButton = new Texture("EXIT", "Karmatic_Arcade.ttf", 32, {230,230,230});
+    mCursor = new Texture("--", "Karmatic_Arcade.ttf", 32, {230,230,230});
 
     mPlayButton->Parent(mPlay);
+    mScoreBoard->Parent(mPlay);
     mExitButton->Parent(mPlay);
     mCursor->Parent(mPlay);
 
-    mPlayButton->Pos(Vector2(-10.0f, -15.0f));
-    mExitButton->Pos(Vector2(-10.0f, 60.0f));
-    mCursor->Pos(Vector2(-100.0f, -17.0f));
+    mPlayButton->Pos(Vector2(-5.0f, -15.0f));
+    mScoreBoard->Pos(Vector2(-5.0f, 60.0f));
+    mExitButton->Pos(Vector2(-5.0f, 135.0f));
+    mCursor->Pos(Vector2(-100.0f, -22.0f));
     mCursorStart = mCursor->Pos(local);
     mCursorOffset = Vector2(0.0f, 77.0f);
     SelectMode = 0;
 
     mPlay->Parent(this);
 
-    mDownBar = new GameEntity(Vector2(Graphics::Instance()->SCREEN_WIDTH*0.85f, Graphics::Instance()->SCREEN_HEIGHT*0.95f));
+    mBottomBar = new GameEntity(Vector2(Graphics::Instance()->SCREEN_WIDTH*0.85f, Graphics::Instance()->SCREEN_HEIGHT*0.95f));
     mCreator = new Texture("Created by Marcin Basisty", "Karmatic_Arcade.ttf", 18, {255, 255, 255});
 
-    mCreator->Parent(mDownBar);
+    mCreator->Parent(mBottomBar);
     mCreator->Pos(VEC2_ZERO);
 
-    mDownBar->Parent(this);
+    mBottomBar->Parent(this);
 }
 
 StartScreen::~StartScreen(){
-    delete mPlayerOne;
-    mPlayerOne = NULL;
-    
-    delete mHiScore;
-    mHiScore = NULL;
 
-    delete mPlayerTwo;
-    mPlayerTwo = NULL;
+    mInput = nullptr;
 
-    delete mTopBar;
-    mTopBar = NULL;
+    delete mTitle;
+    mTitle = nullptr;
 
     delete mPlayButton;
     mPlayButton = NULL;
+
+    delete mScoreBoard;
+    mScoreBoard = NULL;
 
     delete mExitButton;
     mExitButton = NULL;
@@ -74,8 +65,11 @@ StartScreen::~StartScreen(){
     delete mCreator;
     mCreator = NULL;
 
-    delete mDownBar;
-    mDownBar = NULL;
+    delete mTopBar;
+    mTopBar = nullptr;
+
+    delete mBottomBar;
+    mBottomBar = NULL;
 
 }
 
@@ -83,7 +77,9 @@ void StartScreen::ChangeMode(int mode){
     SelectMode += mode;
     if(SelectMode < 0)
         SelectMode = 1;
-    else if(SelectMode > 1)
+    else if(SelectMode > 1 && SelectMode < 2)
+        SelectMode = 2;
+    else if(SelectMode > 2)
         SelectMode = 0;
     mCursor->Pos(mCursorStart + mCursorOffset * SelectMode);
 }
@@ -98,14 +94,12 @@ void StartScreen::Update(){
 int StartScreen::SelectedMode(){
     return SelectMode;
 }
-void StartScreen::Render(){
-    mPlayerOne->Render();
-    mPlayerTwo->Render();
-    mHiScore->Render();
 
+void StartScreen::Render(){
+    mTitle->Render();
     mPlayButton->Render();
+    mScoreBoard->Render();
     mExitButton->Render();
     mCursor->Render();
-
     mCreator->Render();
 }

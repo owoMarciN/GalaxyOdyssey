@@ -5,21 +5,23 @@
 
 #define PI 3.14159265
 #define DEG_TO_RAD PI / 180.0f
+#define RAD_TO_DEG 180.0f / PI
 
 struct Vector2{
     float x, y;
     Vector2(float Nx = 0.0f, float Ny = 0.0f)
         :x(Nx), y(Ny) {};
 
-    float MagnitudeSqrt(){
+    float Magnitude(){
         return (x*x) + (y*y);
     }
-    float Magnitude(){
+
+    float MagnitudeSqrt(){
         return (float)sqrt((x*x) + (y*y));
     }
 
     Vector2 Normalized(){
-        float Mag = Magnitude();
+        float Mag = MagnitudeSqrt();
 
         return Vector2(x / Mag, y / Mag);
     }
@@ -57,6 +59,11 @@ inline Vector2 operator *(const Vector2 &lhs, const float &rhs){
 inline Vector2 Rotatevector(Vector2 & vec, float angle){
     float radAngle = (float)(angle*DEG_TO_RAD);
     return Vector2((float)(vec.x * cos(radAngle) - vec.y * sin(radAngle)), (float)(vec.x * sin(radAngle) + vec.y * cos(radAngle)));
+}
+
+inline float DotProduct(const Vector2 &lhs, Vector2 &rhs){
+    float dotproduct = acos((lhs.x * rhs.x + lhs.y * rhs.y) / (sqrt(lhs.x*lhs.x + lhs.y*lhs.y) * sqrt(rhs.x*rhs.x + rhs.y*rhs.y)));
+    return dotproduct*RAD_TO_DEG;
 }
 
 const Vector2 VEC2_ZERO = {0.0f, 0.0f};

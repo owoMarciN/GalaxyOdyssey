@@ -7,40 +7,39 @@ AssetManager::AssetManager(){
 }
 
 AssetManager::~AssetManager(){
-    for(auto tex : mTextures)
+    
+    for(auto &tex : mTextures)
         if(tex.second != NULL)
             SDL_DestroyTexture(tex.second);
     mTextures.clear();
 
-    for(auto text : mText){
+    for(auto &text : mText){
         if(text.second != NULL){
             SDL_DestroyTexture(text.second);
         }
     }
     mText.clear();
 
-    for(auto font : mFonts){
+    for(auto &font : mFonts){
         if(font.second != NULL){
             TTF_CloseFont(font.second);
         }
     }
     mFonts.clear();
 
-   for(auto music : mMusic) {
+   for(auto &music : mMusic) {
 		if(music.second != NULL) {
 			Mix_FreeMusic(music.second);
 		}
 	}
-
 	mMusic.clear();
 
 	//Freeing all loaded sound effects
-	for(auto sfx : mSFX) {
+	for(auto &sfx : mSFX) {
 		if(sfx.second != NULL) {
 			Mix_FreeChunk(sfx.second);
 		}
 	}
-
 	mSFX.clear();
 }
 
@@ -54,6 +53,7 @@ void AssetManager::Release(){
     delete sInstance;
     sInstance = NULL;
 }
+
 SDL_Texture * AssetManager::GetTexture(std::string file_name){
     std::string fullpath = SDL_GetBasePath();
     fullpath.append("./Assets/" + file_name);
@@ -90,7 +90,7 @@ Mix_Music* AssetManager::GetMusic(std::string filename) {
 
 	//Get the full path of the WAV file
 	std::string fullPath = SDL_GetBasePath();
-	fullPath.append("Assets/" + filename);
+	fullPath.append("./Assets/" + filename);
 
 	//If the file has not been already loaded, load it and add it to the mMusic map
 	if(mMusic[fullPath] == NULL) {
@@ -109,7 +109,7 @@ Mix_Chunk* AssetManager::GetSFX(std::string filename) {
 
 		//Get the full path of the WAV file
 		std::string fullPath = SDL_GetBasePath();
-		fullPath.append("Assets/" + filename);
+		fullPath.append("./Assets/" + filename);
 
 		//If the file has not been already loaded, load it and add it to the mSFX map
 		if(mSFX[fullPath] == NULL) {

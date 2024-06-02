@@ -8,26 +8,23 @@ class StartScreen : public GameEntity{
 private:
 
     InputManager * mInput;
-
+    
     GameEntity * mTopBar;
-    Texture * mPlayerOne;
-    Texture * mPlayerTwo;
-    Texture * mHiScore;
+    Texture * mTitle;
 
     GameEntity * mPlay;
     Texture * mPlayButton;
+    Texture * mScoreBoard;
     Texture * mExitButton;
 
-    GameEntity * mDownBar;
+    GameEntity * mBottomBar;
     Texture * mCreator;
-
     Texture * mCursor;
+
     Vector2 mCursorStart;
     Vector2 mCursorOffset;
     int SelectMode;
 
-    SDL_Color color = {230, 230, 230};
-    
 public:
 
     StartScreen();

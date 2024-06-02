@@ -14,7 +14,7 @@ public:
     static const int SCREEN_WIDTH = 1280;
 
 private:
-    // SDL_Surface * Background;
+    
     static Graphics * sInstance;
     static bool sInitialized;
     SDL_Window * mWindow;
@@ -36,7 +36,7 @@ public:
     void DrawLine(float x_0, float y_0, float x_1, float y_1);
 
     SDL_Texture * CreateTextTexture(TTF_Font * font, std::string text, SDL_Color color);
-    // SDL_Surface * loadSurface(SDL_Surface * surface, char * file_name);
+
 private:
 
     Graphics();

@@ -2,7 +2,6 @@
 #define GAMEMANAGER_H_
 
 #include "Timer.h"
-#include "AudioManager.h"
 #include "InputManager.h"
 #include "ScreenManager.h"
 
@@ -22,7 +21,6 @@ private:
     
     SDL_Event mEvents;
     ScreenManager *  mScreenMgr;
-    //Texture * mBackGround;
 
 public:
 

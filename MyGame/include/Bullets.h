@@ -4,22 +4,32 @@
 #include "AnimatedTexture.h"
 #include "MathHelper.h"
 #include "Timer.h"
-#include <memory>
+#include <vector>
 
 class Bullet : public GameEntity{
-private:
+public:
 
     enum BULLETTYPE{NORMAL, P_SPECIAL, E_NORMAL, E_BOUNCING};
+    int mDamage;
+
+private:
+
     const int OFF_SCREEN_BUFFER = 10;
     Timer * mTimer;
+
     float mSpeed;
     Texture * mBullet;
-    int mDamage;
+    BULLETTYPE mCurrType;
+
+    float DirectionX;
+    float DirectionY;
+
+    int mCountBounces;
     
 public:
 
-    Bullet();
-    // Bullet(int damage = 20, float rotation = 0, BULLETTYPE bType = NORMAL);
+    //Bullet();
+    Bullet(int damage, float speed, float rotation, BULLETTYPE bTypeBullet);
     ~Bullet();
 
     void FireBullet(Vector2 pos);

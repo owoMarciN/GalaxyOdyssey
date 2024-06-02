@@ -1,28 +1,38 @@
 #include "Player.h"
 
-Player::Player()
-    : mBullet(new Bullet[MAX_BULLETS]){
+Player::Player(){
     mTimer = Timer::Instance();
     mInput = InputManager::Instance();
+    mAudio = AudioManager::Instance();
 
     mShip = new Texture("Ship.png");
     mShip->Parent(this);
     mShip->Pos(VEC2_ZERO);
 
     mSpeed = 250.0f;
-    mScore = 0; 
-    mHP = 3;
-    mDamage = 20;
+    mHP = 5;
 
-    std::unique_ptr<Bullet> mSpecialAttack;
-    
+    for(int i = 0; i < MAX_BULLETS; i++)
+        mBullet.push_back(new Bullet(20, 700.0f, -90, Bullet::NORMAL));
     for(int i = 0; i < MAX_BULLETS; i++){
-        mBullet[i].Scale(VEC2_ONE*0.5f);
+        mBullet[i]->Scale(VEC2_ONE*0.5f);
     }
+
+    mSpecialAttack = new Bullet(120, 1000.0f, -90, Bullet::P_SPECIAL);
 }
 
 Player::~Player(){
     mInput = nullptr;
+    mTimer = nullptr;
+    mAudio = nullptr;
+
+    for(auto &bullet : mBullet){
+        delete bullet;
+        bullet = nullptr;
+    }
+
+    delete mSpecialAttack;
+    mSpecialAttack = nullptr;
 
     delete mShip;
     mShip = nullptr;
@@ -58,18 +68,26 @@ void Player::HandleFiring() {
         Uint32 currentTime = SDL_GetTicks();
         if(currentTime - mLastFiredTime >= mFireDelay){
             for(int i = 0; i < MAX_BULLETS; i++) {
-                if(!mBullet[i].Active()) {
-                    mBullet[i].FireBullet(Pos());
+                if(!mBullet[i]->Active()) {
+                    mBullet[i]->FireBullet(Pos());
+                    mAudio->PlayMusic("LaserSound_Normal.mp3", 0);
                     mLastFiredTime = currentTime;
                     break;
                 }
             }
         }
     }
-    //Special Attack
-    // else if(Active() && mInput->KeyDown(SDL_SCANCODE_X)){
 
-    // }
+    if(Active() && mInput->KeyPressed(SDL_SCANCODE_X)) {
+        Uint32 currentTime = SDL_GetTicks();
+        if(currentTime - mLastFiredTime >= mFireSpecialDelay){
+            if(!mSpecialAttack->Active()) {
+                mSpecialAttack->FireBullet(Pos());
+                mAudio->PlayMusic("LaserSound_Heavy.mp3", 0);
+                mLastFiredTime = currentTime;
+            }
+        }
+    }
 }
 
 void Player::LoseHP(int change){
@@ -80,22 +98,17 @@ void Player::Update(){
     if(Active()){
         HandleMovement();
         HandleFiring();
+        for(int i = 0; i < MAX_BULLETS; i++)
+            mBullet[i]->Update();
+        mSpecialAttack->Update();
     }
-
-    for(int i = 0; i < MAX_BULLETS; i++)
-        mBullet[i].Update();
 }
 
 void Player::Render(){
-    mShip->Render();
-    for(int i = 0; i < MAX_BULLETS; i++)
-        mBullet[i].Render();
-}
-
-int Player::Score(){
-    return mScore;
-}
-
-void Player::AddScore(int change){
-    mScore += change;
+    if(Active()){
+        mShip->Render();
+        for(int i = 0; i < MAX_BULLETS; i++)
+            mBullet[i]->Render();
+        mSpecialAttack->Render();
+    }
 }

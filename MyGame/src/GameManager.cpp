@@ -24,8 +24,6 @@ GameManager::GameManager(){
     mAudioMgr = AudioManager::Instance();
     mTimer = Timer::Instance();
 
-    //mBackGround = new Texture("newCosmos.png");
-    //mBackGround->Pos(Vector2(Graphics::SCREEN_WIDTH*0.5f, Graphics::SCREEN_HEIGHT*0.5f));
     mScreenMgr = ScreenManager::Instance();
 }
 
@@ -49,8 +47,6 @@ GameManager::~GameManager(){
     Timer::Release();
     mTimer = NULL;
 
-    // delete mBackGround;
-    // mBackGround = NULL
 }
 
 void GameManager::EarlyUpdate(){
@@ -60,7 +56,6 @@ void GameManager::EarlyUpdate(){
 
 void GameManager::Update() {
 	//GameEntity Updates should happen here
-    //mBackGround->Update();
     mTimer->Reset();
 }
 
@@ -74,9 +69,10 @@ void GameManager::Render() {
 
 	//Clears the last frame's render from the back buffer
 	mGraphics->ClearBackBuffer();
-    mScreenMgr->Render();
-    //mBackGround->Render();
+
 	//All other rendering is to happen here
+    mScreenMgr->Render();
+
 	//Renders the current frame
 	mGraphics->Render();
 }

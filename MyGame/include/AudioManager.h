@@ -30,21 +30,20 @@ public:
 		//Resumes paused BGM
 		//-------------------------
 	void ResumeMusic();
-
-		//--------------------------------------------------
-		//Plays a sound effect from the file provided
-		//plays if for the given loops (default: 0)
-		//on the given channel (default: 0)
-		//--------------------------------------------------
+	//--------------------------------------------------
+	//Plays a sound effect from the file provided
+	//plays if for the given loops (default: 0)
+	//on the given channel (default: 0)
+	//--------------------------------------------------
 	void PlaySFX(std::string filename, int loops = 0, int channel = 0);
 
 private:
-		//------------------------------------------------------------------------------------------
-		//Contructor is private so that Instance() must be used to get an instance when needed  
-		//------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------
+	//Contructor is private so that Instance() must be used to get an instance when needed  
+	//------------------------------------------------------------------------------------------
 	AudioManager();
 		//-------------------------------------------------------------------------------------
-		//Destructor is private so that the instance can only be destroyed using Release()  
+	//Destructor is private so that the instance can only be destroyed using Release()  
 	//-------------------------------------------------------------------------------------
 	~AudioManager();
 
