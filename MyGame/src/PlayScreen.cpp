@@ -11,23 +11,21 @@ PlayScreen::PlayScreen(){
     mTopBar = new GameEntity(VEC2_ZERO);
     
     mScore = 0;
-    mPointsTex = nullptr;
+    mScoreTex = nullptr;
     UpdateScore(0);
 
-    mHPTex = new Texture("hp_bar_outer_v2.png");
-    mHPBar = new Texture("hp_bar_inner_v2.png");
-    mScoreTex = new Texture("SCORE", "Karmatic_Arcade.ttf", 22, {255, 255, 255});
-    mScoreTex->Pos(Vector2(Graphics::Instance()->SCREEN_WIDTH*0.05f, 20));
+    mHpBarOuter = new Texture("hp_bar_outer_v2.png");
+    mHpBarInner = new Texture("hp_bar_inner_v2.png");
+    mScoreLabel = new Texture("SCORE", "Karmatic_Arcade.ttf", 22, {255, 255, 255});
+    mScoreLabel->Pos(Vector2(Graphics::Instance()->SCREEN_WIDTH*0.05f, 20));
 
-    mScoreTex->Parent(mTopBar);
-    mHPTex->Parent(this);
-    mHPBar->Parent(this);
+    mScoreLabel->Parent(mTopBar);
+    mHpBarOuter->Parent(mTopBar);
+    mHpBarInner->Parent(mTopBar);
 
     mHP = {1.0f, 1.0f};
-    newPos = Vector2(Graphics::Instance()->SCREEN_WIDTH*0.905f, 20);
-
-    mHPTex->Pos(Vector2(Graphics::Instance()->SCREEN_WIDTH*0.89f, 20));
-    mHPBar->Pos(newPos);
+    mHpBarOuter->Pos(Vector2(Graphics::Instance()->SCREEN_WIDTH*0.89f, 20));
+    mHpBarInner->Pos(Vector2(Graphics::Instance()->SCREEN_WIDTH*0.905f, 20));
     
     mTopBar->Parent(this);
 
@@ -39,36 +37,72 @@ PlayScreen::PlayScreen(){
     mCosmos->Pos(Vector2(Graphics::Instance()->SCREEN_WIDTH*0.5f, Graphics::Instance()->SCREEN_HEIGHT*0.5f));
 
     mBackGround->Parent(this);
-    UnexpectedAttack();
+
+    mWaveCounter = 0;
+
+    // Enemy::createPaths({670, 0.0f}, {670, -5.0f}, {670, 100}, {670, 100 + 5.0f}, 10);
+    // mEnemy.push_back(std::vector<Enemy *>());
+    // mEnemy[0].push_back(new Enemy(0, Enemy::GAMMA));
+    // mEnemy[0][0]->Parent(this);
 }
 
-void PlayScreen::UnexpectedAttack(){
-    srand(time(NULL));
-    if(mEnemy.empty()){
+void PlayScreen::CreateEnemyPaths(){
+    if(Enemy::sPathsEmpty()){
         for(int i = 0; i < MAX_ROWS; i++){
             for(int j = 0; j < MAX_COLUMNS; j++){
-                float xPos = 160.0f * (j+1);
+                float xPos = 213.3f * (j+1);
                 float yPos = 70.0f * (i+1);
                 Enemy::createPaths({xPos, 0.0f}, {xPos, -5.0f}, {xPos, yPos}, {xPos, yPos + 5.0f}, 10);
             }
-        }    
-
-        int counter = 0;
-        for(int i = 0; i < MAX_ROWS; i++){
-            mEnemy.push_back(std::vector<Enemy *>());
-            for(int j = 0; j < MAX_COLUMNS; j++){
-                int prob = rand() % 100 + 1;
-                if(prob >= 1 && prob <= 20 && i <= 1){
-                    mEnemy[i].push_back(new Enemy(counter, Enemy::BETA));
-                }
-                else{
-                    mEnemy[i].push_back(new Enemy(counter));
-                }
-                mEnemy[i][j]->Parent(this);
-                //mEnemy[i][j]->GetPlayerPos(mPlayer->Pos());
-                counter++;
-            }
         }
+    } 
+}
+
+std::vector<std::vector<Enemy *>> PlayScreen::CreateEnemies(std::vector<std::vector<Enemy *>> &EnemyMatrix){
+    srand(time(NULL));
+    int counter = 0;
+    for(int i = 0; i < MAX_ROWS; i++){
+        EnemyMatrix.push_back(std::vector<Enemy *>());
+        for(int j = 0; j < MAX_COLUMNS; j++){
+            int prob = rand() % 100 + 1;
+            if(prob >= 10 && prob < 20 && i <= 1){
+                EnemyMatrix[i].push_back(new Enemy(counter, Enemy::BETA));
+            }
+            else if(prob >= 20 && prob <= 25 && i >= 1){
+                EnemyMatrix[i].push_back(new Enemy(counter, Enemy::GAMMA));
+            }
+            else{
+                EnemyMatrix[i].push_back(new Enemy(counter));
+            }
+            EnemyMatrix[i][j]->Parent(this);
+            counter++;
+        }
+    }
+    return EnemyMatrix;
+}
+
+bool PlayScreen::CheckEnemyActivity(){
+    for(auto &row : mEnemy)
+        for(auto &enemy : row)
+            if(enemy->Active())
+                return false;
+    return true;
+}
+
+void PlayScreen::UnexpectedAttack(){
+    CreateEnemyPaths();
+    if(mEnemy.empty())
+        mEnemy = CreateEnemies(mEnemy);
+    
+    if(CheckEnemyActivity()){
+        mNextEnemy = CreateEnemies(mNextEnemy);
+        mEnemy = mNextEnemy;
+        mNextEnemy.clear();
+        mWaveCounter++;
+    }
+
+    if(mWaveCounter > 1){
+        std::cout << "You've won!" << '\n';
     }
 }
 
@@ -140,13 +174,17 @@ void PlayScreen::HandleEnemyCollision() {
     }
 }
 
-void PlayScreen::HandlePlayerCollision() {
+void PlayScreen::HandlePlayerCollision() {    
     if(mPlayer->Active() && mPlayer->mHP > 0){
         for(auto &row : mEnemy){
             for(auto &enemy : row){
                 if(enemy->Active()){
                     for(auto &bullet : enemy->mBullet){
                         if(bullet->Active()){
+
+                            //Giving the position of the Player to the bullet
+                            bullet->GetPlayerPos(mPlayer->Pos());
+
                             // Use bounding box collision detection
                             Vector2 bulletPos = bullet->Pos();
                             Vector2 playerPos = mPlayer->Pos();
@@ -162,8 +200,8 @@ void PlayScreen::HandlePlayerCollision() {
                                 bullet->Reload();
                                 mPlayer->LoseHP(bullet->mDamage);
                                 Vector2 newHP = {mHP.x-=0.20f, mHP.y};
-                                mHPBar->Pos(mHPBar->Pos() - Vector2(21.0f, 0.0f));
-                                mHPBar->Scale(newHP);
+                                mHpBarInner->Pos(mHpBarInner->Pos() - Vector2(21.0f, 0.0f));
+                                mHpBarInner->Scale(newHP);
                             }
                         }
                     }
@@ -176,9 +214,10 @@ void PlayScreen::HandlePlayerCollision() {
 }
 
 void PlayScreen::EnemyFormation(){
+    UnexpectedAttack();
     for(int i = 0; i < MAX_ROWS-1; i++){
         for(int j = 0; j < MAX_COLUMNS; j++){
-            if(mEnemy[i][j]->Active() && mEnemy[i+1][j]->Active() && mEnemy[i][j]->mType == Enemy::ALPHA){
+            if(mEnemy[i][j]->Active() && mEnemy[i+1][j]->Active() && mEnemy[i][j]->mType != Enemy::BETA){
                 mEnemy[i][j]->NoCollisions(false);
             }
             else{
@@ -190,13 +229,13 @@ void PlayScreen::EnemyFormation(){
 
 void PlayScreen::UpdateScore(unsigned int score){
     mScore += score;
-    if(mPointsTex != nullptr){
-        delete mPointsTex;
-        mPointsTex = nullptr;
+    if(mScoreTex != nullptr){
+        delete mScoreTex;
+        mScoreTex = nullptr;
     }
-    mPointsTex = new Texture(std::to_string(mScore), "Karmatic_Arcade.ttf", 22, {255, 255, 255});
-    mPointsTex->Parent(mTopBar);
-    mPointsTex->Pos(Vector2(Graphics::Instance()->SCREEN_WIDTH*0.15f, 20));
+    mScoreTex = new Texture(std::to_string(mScore), "Karmatic_Arcade.ttf", 22, {255, 255, 255});
+    mScoreTex->Parent(mTopBar);
+    mScoreTex->Pos(Vector2(Graphics::Instance()->SCREEN_WIDTH*0.15f, 20));
 }
 
 int PlayScreen::GetScore(){
@@ -219,17 +258,17 @@ PlayScreen::~PlayScreen(){
     delete mCosmos;
     mCosmos = nullptr;
 
+    delete mScoreLabel;
+    mScoreLabel = nullptr;
+
     delete mScoreTex;
-    mScoreTex = nullptr;
+    mScoreTex = nullptr; 
 
-    delete mPointsTex;
-    mPointsTex = nullptr; 
+    delete mHpBarOuter;
+    mHpBarOuter = nullptr;
 
-    delete mHPTex;
-    mHPTex = nullptr;
-
-    delete mHPBar;
-    mHPBar = nullptr;
+    delete mHpBarInner;
+    mHpBarInner = nullptr;
 
     delete mTopBar;
     mTopBar = nullptr;
@@ -240,9 +279,7 @@ PlayScreen::~PlayScreen(){
 }
 
 void PlayScreen::Update(){
-
     mPlayer->Update();
-    
     for(auto &row : mEnemy)
         for(auto &enemy : row)
             enemy->Update();
@@ -254,11 +291,12 @@ void PlayScreen::Update(){
 
 void PlayScreen::Render(){
     mCosmos->Render();
+    mScoreLabel->Render();
     mScoreTex->Render();
-    mPointsTex->Render();
-    mHPTex->Render();
-    mHPBar->Render();
+    mHpBarOuter->Render();
+    mHpBarInner->Render();
     mPlayer->Render();
+
     for(auto &row : mEnemy)
         for(auto &enemy : row)
             enemy->Render();

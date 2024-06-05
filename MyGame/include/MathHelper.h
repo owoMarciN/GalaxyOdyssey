@@ -3,9 +3,8 @@
 
 #include <cmath>
 
-#define PI 3.14159265
-#define DEG_TO_RAD PI / 180.0f
-#define RAD_TO_DEG 180.0f / PI
+#define DEG_TO_RAD M_PI / 180.0f
+#define RAD_TO_DEG 180.0f / M_PI
 
 struct Vector2{
     float x, y;
@@ -21,9 +20,12 @@ struct Vector2{
     }
 
     Vector2 Normalized(){
-        float Mag = MagnitudeSqrt();
-
-        return Vector2(x / Mag, y / Mag);
+        float Mag = this->MagnitudeSqrt();
+        if(Mag > 0) {
+            x /= Mag;
+            y /= Mag;
+        }
+        return Vector2(x, y);
     }
 
     Vector2 &operator +=(const Vector2 &rhs){
@@ -61,8 +63,8 @@ inline Vector2 Rotatevector(Vector2 & vec, float angle){
     return Vector2((float)(vec.x * cos(radAngle) - vec.y * sin(radAngle)), (float)(vec.x * sin(radAngle) + vec.y * cos(radAngle)));
 }
 
-inline float DotProduct(const Vector2 &lhs, Vector2 &rhs){
-    float dotproduct = acos((lhs.x * rhs.x + lhs.y * rhs.y) / (sqrt(lhs.x*lhs.x + lhs.y*lhs.y) * sqrt(rhs.x*rhs.x + rhs.y*rhs.y)));
+inline float DotProduct(Vector2 &lhs, Vector2 &rhs){
+    float dotproduct = acos((lhs.x * rhs.x + lhs.y * rhs.y) / lhs.MagnitudeSqrt() * rhs.MagnitudeSqrt());
     return dotproduct*RAD_TO_DEG;
 }
 
@@ -72,10 +74,7 @@ const Vector2 VEC2_UP = {0.0f, 1.0f};
 const Vector2 VEC2_RIGHT = {1.0f, 0.0f};
 
 struct BezierCurve{
-    Vector2 p0;
-    Vector2 p1;
-    Vector2 p2;
-    Vector2 p3;
+    Vector2 p0, p1, p2, p3;
     Vector2 calculateCurvePoint(float t){
         float t_2 = t*t;
         float t_3 = t*t_2;

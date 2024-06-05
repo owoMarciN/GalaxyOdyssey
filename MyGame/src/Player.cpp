@@ -14,9 +14,6 @@ Player::Player(){
 
     for(int i = 0; i < MAX_BULLETS; i++)
         mBullet.push_back(new Bullet(20, 700.0f, -90, Bullet::NORMAL));
-    for(int i = 0; i < MAX_BULLETS; i++){
-        mBullet[i]->Scale(VEC2_ONE*0.5f);
-    }
 
     mSpecialAttack = new Bullet(120, 1000.0f, -90, Bullet::P_SPECIAL);
 }
@@ -78,7 +75,7 @@ void Player::HandleFiring() {
         }
     }
 
-    if(Active() && mInput->KeyPressed(SDL_SCANCODE_X)) {
+    if(Active() && mInput->KeyDown(SDL_SCANCODE_X)){
         Uint32 currentTime = SDL_GetTicks();
         if(currentTime - mLastFiredTime >= mFireSpecialDelay){
             if(!mSpecialAttack->Active()) {

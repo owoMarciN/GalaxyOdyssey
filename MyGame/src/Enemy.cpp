@@ -14,6 +14,12 @@ void Enemy::createPaths(Vector2 vec1, Vector2 vec2, Vector2 vec3, Vector2 vec4, 
     path = NULL;
 }
 
+bool Enemy::sPathsEmpty(){
+    if(sPaths.empty())
+        return 1;
+    return 0;
+}
+
 Enemy::Enemy(int path, ENEMYTYPES mEnemy){
 
     mTimer = Timer::Instance();
@@ -21,41 +27,39 @@ Enemy::Enemy(int path, ENEMYTYPES mEnemy){
     switch(mEnemy){
         case ALPHA:
             mType = ALPHA;
-            mHP = 60;
+            mHP = 30;
             mScore = 300;
             mSpeed = 100.0f;
-            for(int i = 0; i < MAX_BULLETS; i++){
-                mBullet.push_back(new Bullet(1, -170.0f, -90, Bullet::E_NORMAL));
-                mBullet[i]->Scale(VEC2_ONE*0.75f);
-            }
-            mTexture = new Texture("EnemyType1.png");
-            mTexture->Scale(VEC2_ONE*0.25f);
+
+            for(int i = 0; i < MAX_BULLETS; i++)
+                mBullet.push_back(new Bullet(1, -200.0f, 90, Bullet::E_NORMAL));
+
+            mEnemyTex = new Texture("EnemyType1.png");
+            mEnemyTex->Scale(VEC2_ONE*0.25f);
             break;
         case BETA:
             mType = BETA;
             mHP = 30;
             mScore = 500;
             mSpeed = 100.0f;
-            //DotProduct(Pos(), mPlayerPos)
 
-            for(int i = 0; i < MAX_BULLETS; i++){
-                mBullet.push_back(new Bullet(1, -200.0f, 45, Bullet::E_BOUNCING));
-            }
-
-            mTexture = new Texture("EnemyType2.png");
-            mTexture->Scale(VEC2_ONE*0.25f);
+            for(int i = 0; i < MAX_BULLETS; i++)
+                mBullet.push_back(new Bullet(1, -250.0f, 0, Bullet::E_BOUNCING));
+            
+            mEnemyTex = new Texture("EnemyType2.png");
+            mEnemyTex->Scale(VEC2_ONE*0.25f);
             break;
-        case BOSS:
-            mType = BOSS;
-            mHP = 1000;
-            mScore = 999999;
-            mSpeed = 130.0f;
-            for(int i = 0; i < MAX_BULLETS; i++){
-                mBullet.push_back(new Bullet(1, -200.0f, -90, Bullet::E_NORMAL));
-                mBullet[i]->Scale(VEC2_ONE*0.75f);
-            }
-            mTexture = new Texture("Boss.png");
-            mTexture->Scale(VEC2_ONE*0.25f);
+        case GAMMA:
+            mType = GAMMA;
+            mHP = 100;
+            mScore = 700;
+            mSpeed = 100.0f;
+
+            for(int i = 0; i < MAX_BULLETS; i++)
+                mBullet.push_back(new Bullet(1, -240.0f, -90, Bullet::E_TRACKING));
+            
+            mEnemyTex = new Texture("EnemyType3.png");
+            mEnemyTex->Scale(VEC2_ONE*0.06f);
             break;
     }
     
@@ -67,8 +71,8 @@ Enemy::Enemy(int path, ENEMYTYPES mEnemy){
     mCurrWayPoint = 0;
     Pos(sPaths[mCurrPath][mCurrWayPoint]);
 
-    mTexture->Parent(this);
-    mTexture->Pos(VEC2_ZERO);
+    mEnemyTex->Parent(this);
+    mEnemyTex->Pos(VEC2_ZERO);
 
 }
 
@@ -80,12 +84,8 @@ Enemy::~Enemy(){
         bullet = nullptr;
     }
 
-    delete mTexture;
-    mTexture = nullptr;
-}
-
-void Enemy::HandleDeadState(){
-    
+    delete mEnemyTex;
+    mEnemyTex = nullptr;
 }
 
 void Enemy::HandleFlyState(){
@@ -103,6 +103,10 @@ void Enemy::HandleFlyState(){
 
 void Enemy::HandleFormationState(){
     InPosition(true);
+}
+
+void Enemy::HandleDeadState(){
+
 }
 
 void Enemy::HandleStates(){
@@ -140,18 +144,19 @@ bool Enemy::NoCollisions(){
 }
 
 void Enemy::Update(){
-    if(Active()) {
+    if(Active()){
         HandleStates();
         HandleFiring();
-    }   
+    } 
+
     for(auto &bullet : mBullet)
         bullet->Update();     
 }
 
 void Enemy::Render(){
-    if(Active()){
-        mTexture->Render();
-    }
+    if(Active())
+        mEnemyTex->Render();
+
     for(auto &bullet : mBullet)
         bullet->Render();
         // for(unsigned int i = 0; i < sPaths[mCurrPath].size()-1; i++){
@@ -163,8 +168,8 @@ void Enemy::HandleFiring() {
     if(Active() && InPosition() && NoCollisions()){
         Uint32 currentTime = SDL_GetTicks();
         if(currentTime - mLastFiredTime >= mFireDelay){
-            for(int i = 0; i < MAX_BULLETS; i++) {
-                if(!mBullet[i]->Active()) {
+            for(int i = 0; i < MAX_BULLETS; i++){
+                if(!mBullet[i]->Active()){
                     mBullet[i]->FireBullet(Pos());
                     mLastFiredTime = currentTime;
                     break;
@@ -176,8 +181,4 @@ void Enemy::HandleFiring() {
 
 void Enemy::LoseHP(int change) {
     mHP -= change;
-}
-
-void Enemy::GetPlayerPos(Vector2 pos){
-    mPlayerPos = pos;
 }

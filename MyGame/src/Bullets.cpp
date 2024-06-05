@@ -6,27 +6,30 @@ Bullet::Bullet(int damage, float speed, float rotation, BULLETTYPE bType){
 
     switch(bType){
         case NORMAL:
-            mBullet = new Texture("bullet.png");
+            mBulletTex = new Texture("bullet.png");
+            mBulletTex->Scale(VEC2_ONE*0.5f);
             break;
         case P_SPECIAL:
-            mBullet = new Texture("player_special.png");
+            mBulletTex = new Texture("player_special.png");
             break;
         case E_NORMAL:
-            mBullet = new Texture("enemy_bullet.png");
+            mBulletTex = new Texture("enemy_bullet.png");
+            mBulletTex->Scale(VEC2_ONE*0.75f);
             break;
         case E_BOUNCING:
-            mBullet = new Texture("04.png");
+            mBulletTex = new Texture("bouncy_bullet.png");
+            mBulletTex->Scale(VEC2_ONE*0.05f);
+            break;
+        case E_TRACKING:
+            mBulletTex = new Texture("tracking_bullet.png");
             break;
     }
     
-    mBullet->Parent(this);
-    mBullet->Pos(VEC2_ZERO);
-    mBullet->Rotate(rotation);
+    mBulletTex->Parent(this);
+    mBulletTex->Pos(VEC2_ZERO);
+    mBulletTex->Rotate(rotation);
     mDamage = damage;
     mSpeed = speed;
-
-    DirectionX = -1.0f;
-    DirectionY = -1.0f;
     mCountBounces = 0;
 
     Reload();
@@ -35,18 +38,31 @@ Bullet::Bullet(int damage, float speed, float rotation, BULLETTYPE bType){
 Bullet::~Bullet(){
     mTimer = nullptr;
 
-    delete mBullet;
-    mBullet = nullptr;
+    delete  mBulletTex;
+    mBulletTex = nullptr;
 }
 
 void Bullet::FireBullet(Vector2 pos){
-    Pos(pos);
-    Active(true);
+    //Firing the bullet form the given position
+    Pos(pos);   
+
+    //Setting the X and Y directions, which are used by BETA - EnemyType2
+    if(pos.x > 640){
+        DirectionX = -1.0f;
+        DirectionY = -1.0f;
+        }
+    else{
+        DirectionX = 1.0f;
+        DirectionY = -1.0f;   
+    }
+
+    //Activating the bullet
+    Active(true);   
 }
 
 void Bullet::Reload(){
-    Active(false);
-    mCountBounces = 0;
+    Active(false);  //Deactivating the bullet
+    mCountBounces = 0;  //The number of bounces is set to zero for BETA - EnemyType2
 }
 
 void Bullet::Update(){
@@ -55,8 +71,10 @@ void Bullet::Update(){
         case P_SPECIAL:
         case E_NORMAL:
             if(Active()){
+                //Changing the current 'world' position of the bullet
                 Translate(-VEC2_UP * mSpeed * mTimer->DeltaTime(), world);
 
+                //Checking if there's a collision with the window's bottom edge with the current position of the bullet
                 Vector2 pos = Pos();
                 if(pos.y < -OFF_SCREEN_BUFFER || pos.y > Graphics::Instance()->SCREEN_HEIGHT + OFF_SCREEN_BUFFER){
                     Reload();
@@ -65,34 +83,77 @@ void Bullet::Update(){
             break;
         case E_BOUNCING:
             if(Active()){
+
+                //Changing the current 'world' position of the bullet
                 Translate(Vector2(DirectionX, DirectionY) * mSpeed * mTimer->DeltaTime(), world);
-
-                Vector2 pos = Pos();
-
-                if(mCountBounces >= 5)
+                
+                //Making the bullet inactive after bounces of the window 4 or more times
+                if(mCountBounces >= 4){
                     Reload();
+                }
 
+                /*
+                Checking if there's a collision with any of the window's edges with the current position and 
+                updating the bullets direction on the X-axis or Y-axis, also the number of bounces is increased by 1
+                */
+                Vector2 pos = Pos();
                 if(pos.x < -OFF_SCREEN_BUFFER || pos.x > Graphics::Instance()->SCREEN_WIDTH + OFF_SCREEN_BUFFER){
                     DirectionX *= -1.0f;
                     mCountBounces++;
                     pos.x += DirectionX * mSpeed * mTimer->DeltaTime();
-                    Rotate(90*DirectionX);
                 }
-
                 if(pos.y < -OFF_SCREEN_BUFFER || pos.y > Graphics::Instance()->SCREEN_HEIGHT + OFF_SCREEN_BUFFER){
                     DirectionY *= -1.0f;
                     mCountBounces++;
                     pos.y += DirectionY * mSpeed * mTimer->DeltaTime();
-                    Rotate(90*DirectionY);
                 }
+
+                //Updating the new position
                 Pos(pos);
+            }
+            break;
+        case E_TRACKING:
+            Vector2 bulletPos = Pos();
+            Vector2 directionToPlayer = mPlayerPos - bulletPos;
+
+            if(directionToPlayer.y < 220.0f){
+                //Setting the X and Y directions
+                DirectionX = PrevDirection.x;
+                DirectionY = PrevDirection.y;
+            }
+            else{
+                directionToPlayer.Normalized();     //Calculating the unit vector of the distance to the player
+
+                //Setting the X and Y directions
+                DirectionX = -directionToPlayer.x;
+                DirectionY = -directionToPlayer.y;
+
+                //Remembering the previous direction
+                PrevDirection = Vector2(DirectionX, DirectionY);
+
+                //Calculating the angle between the Player and the bullet position
+                float angleToPlayer = atan2(directionToPlayer.y, directionToPlayer.x);
+
+                //Rotating the texture of the bullet by the given amount
+                mBulletTex->Rotation(angleToPlayer * RAD_TO_DEG);
+            }
+
+            Translate(Vector2(DirectionX, DirectionY) * mSpeed * mTimer->DeltaTime(), world);
+
+            Vector2 pos = Pos();
+            if(pos.y < -OFF_SCREEN_BUFFER || pos.y > Graphics::Instance()->SCREEN_HEIGHT + OFF_SCREEN_BUFFER 
+                || pos.x < -OFF_SCREEN_BUFFER || pos.x > Graphics::Instance()->SCREEN_WIDTH + OFF_SCREEN_BUFFER){
+                Reload();
             }
             break;
     }
 }
 
 void Bullet::Render(){
-    if(Active()){
-         mBullet->Render();
-    }
+    if(Active())
+        mBulletTex->Render();
+}
+
+void Bullet::GetPlayerPos(Vector2 pos){
+    mPlayerPos = pos;
 }

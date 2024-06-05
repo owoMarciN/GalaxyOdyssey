@@ -9,7 +9,7 @@ class Enemy : public GameEntity{
 public:
 
     enum STATES{FLY, FORMATION, DEAD};
-    enum ENEMYTYPES{ALPHA, BETA, BOSS};
+    enum ENEMYTYPES{ALPHA, BETA, GAMMA};
 
 private:
 
@@ -18,11 +18,8 @@ private:
 
     Timer * mTimer;
 
-    Texture * mTexture;
+    Texture * mEnemyTex;
     STATES mCurrState;
-
-    Vector2 mPlayerPos;
-
     unsigned int mCurrPath;
     unsigned int mCurrWayPoint;
     const float EPSIOLON = 5.0f;
@@ -30,10 +27,11 @@ private:
     float mSpeed;
 
     Uint32 mLastFiredTime = 0;  // Time when the last bullet was fired
-    const Uint32 mFireDelay = 700;
+    const Uint32 mFireDelay = 1000;
 
 public:
 
+    //Create GET functions
     ENEMYTYPES mType;
     int mHP;
     unsigned int mScore;
@@ -55,6 +53,7 @@ protected:
 public:
 
     static void createPaths(Vector2 vec1, Vector2 vec2, Vector2 vec3, Vector2 vec4, int samples);
+    static bool sPathsEmpty();
 
     Enemy(int path, ENEMYTYPES mEnemy = ALPHA);
     virtual ~Enemy();

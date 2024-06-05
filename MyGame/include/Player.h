@@ -17,7 +17,7 @@ private:
 
     Uint32 mLastFiredTime = 0;  // Time when the last bullet was fired
     const Uint32 mFireDelay = 400;
-    const Uint32 mFireSpecialDelay = 2000;
+    const Uint32 mFireSpecialDelay = 500;
 
 public:
 
