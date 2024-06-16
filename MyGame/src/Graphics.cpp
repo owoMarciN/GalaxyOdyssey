@@ -58,7 +58,7 @@ bool Graphics::Init(){
         return false;
     }
 
-    mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_SOFTWARE);
+    mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
     if(mRenderer == nullptr){
         std::cout << "SDL Create Renderer Error: " << SDL_GetError();
         return false;
