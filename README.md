@@ -53,7 +53,7 @@ make
 
 ## License
 
-Author: Marcin Basisty [@owoMarciN](https://gitlab.com/owoMarciN)
+Author: Marcin Basisty [@owoMarciN](https://github.com/owoMarciN)
 
 This project is distributed under the terms of the MIT license
 [&lt;LICENSE&gt;](LICENSE).
