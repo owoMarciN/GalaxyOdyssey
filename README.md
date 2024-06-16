@@ -17,8 +17,8 @@ sudo apt install build-essential pkg-config cmake cmake-data libsdl2-dev
 **Additional packages:**
 
 - [SDL2_image](https://github.com/libsdl-org/SDL_image) library
-- [SDL2_ttf][] library
-- [SDL2_mixer][] library
+- [SDL2_ttf](https://github.com/libsdl-org/SDL_ttf) library
+- [SDL2_mixer](https://github.com/libsdl-org/SDL_mixer) library
 
 ```sh
 sudo apt install libsdl2-image-dev libfreetype6-dev libsdl2-ttf-dev libsdl2-mixer-dev
