@@ -4,7 +4,7 @@ This project is a basic C++ [SDL2][SDL] Game.
 
 ## Dependencies
 
-- C Compiler (gcc, ...)
+- C++ Compiler (g++, ...)
 - [CMake][]
 - [SDL2][SDL] library
 
@@ -49,10 +49,6 @@ make
 ```
 
 ***Note:*** If there were errors occurring during that point please
-
-### Open the project with an IDE under Linux
-
-See [IDE_USAGE.md](IDE_USAGE.md) for details.
 
 ## License
 
