@@ -5,8 +5,8 @@ This project is a basic C++ [SDL2][SDL] Game.
 ## Dependencies
 
 - C++ Compiler (g++, ...)
-- [CMake][]
-- [SDL2][SDL] library
+- [CMake](https://cmake.org/)
+- [SDL2](https://www.libsdl.org/) library
 
 **On Debian/Ubuntu based distributions, use the following command:**
 
@@ -16,7 +16,7 @@ sudo apt install build-essential pkg-config cmake cmake-data libsdl2-dev
 
 **Additional packages:**
 
-- [SDL2_image][] library
+- [SDL2_image](https://github.com/libsdl-org/SDL_image) library
 - [SDL2_ttf][] library
 - [SDL2_mixer][] library
 
