@@ -34,7 +34,8 @@ sudo apt install libmikmod-dev libfishsound1-dev libsmpeg-dev liboggz2-dev libfl
 ## Build instructions
 
 ```sh
-# Before compiling the project you can check if the SDL2 libraries were correctly installed in /usr/local/lib
+# Before compiling the project you can check if the SDL2 libraries
+# were correctly installed in  /usr/local/lib
 # There should be files with *.so extension (like `libSDL2.so`, `libSDL2_image.so`, ...)
 
 # Go inside the projects folder
