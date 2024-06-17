@@ -30,7 +30,6 @@ Graphics::~Graphics(){
     SDL_DestroyRenderer(mRenderer);
     mRenderer = nullptr;
 
-    SDL_FreeSurface(mIcon);
     mIcon = nullptr;
 
     TTF_Quit();
@@ -52,6 +51,7 @@ bool Graphics::Init(){
 
     mIcon = IMG_Load("Assets/Textures/Icon.png");
     SDL_SetWindowIcon(mWindow, mIcon);
+    SDL_FreeSurface(mIcon);
     
     if(!mIcon){
         std::cout << "[Error]: Window Icon couldn't be created" << IMG_GetError();
@@ -92,8 +92,6 @@ SDL_Texture * Graphics::loadTexture(std::string path){
 
     if(tex == nullptr){
         std::cout << "SDL Create Texture Error: " << SDL_GetError() << '\n';
-        SDL_FreeSurface(surface);
-        return tex;
     }
 
     SDL_FreeSurface(surface);
