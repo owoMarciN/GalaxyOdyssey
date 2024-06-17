@@ -5,13 +5,12 @@ This project is a basic C++ [SDL2][SDL] Game.
 ## Dependencies
 
 - C++ Compiler (g++, ...)
-- [CMake](https://cmake.org/)
 - [SDL2](https://www.libsdl.org/) library
 
 **On Debian/Ubuntu based distributions, use the following command:**
 
 ```sh
-sudo apt install build-essential pkg-config cmake cmake-data libsdl2-dev
+sudo apt install build-essential pkg-config libsdl2-dev
 ```
 
 **Additional packages:**
@@ -46,7 +45,7 @@ cd MyGame
 make
 
 # Run
-./MyGame
+./GalaxyOdyssey
 ```
 
 ***Note:*** If there were errors occurring during that point please
