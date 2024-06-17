@@ -40,7 +40,6 @@ sudo apt install libmikmod-dev libfishsound1-dev libsmpeg-dev liboggz2-dev libfl
 cd MyGame
 
 # Type  `make`  in the terminal. 
-
 make
 
 # Run
