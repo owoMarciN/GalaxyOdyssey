@@ -37,7 +37,7 @@ sudo apt install libmikmod-dev libfishsound1-dev libsmpeg-dev liboggz2-dev libfl
 # were correctly installed in  /usr/local/lib
 
 # Go inside the projects folder
-cd MyGame
+cd GalaxyOdyssey
 
 # Type  `make`  in the terminal. 
 make
@@ -46,7 +46,7 @@ make
 ./GalaxyOdyssey
 ```
 
-***Note:*** If there were errors occurring during that point please
+***Note:*** I know there's memory leaks plaese don't hate me :'(
 
 ## License
 
