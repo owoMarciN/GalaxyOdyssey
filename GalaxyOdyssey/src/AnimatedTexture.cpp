@@ -6,7 +6,7 @@ AnimatedTexture::AnimatedTexture(std::string filename, int x, int y, int w, int 
 	mTimer = Timer::Instance();
 
 	mStartX = x;
-    mStartY = y;
+    	mStartY = y;
 
 	mFrameCount = frameCount;
 	mAnimationSpeed = animationSpeed;
