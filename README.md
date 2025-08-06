@@ -30,7 +30,7 @@ sudo apt install libjpeg-dev libwebp-dev libtiff5-dev
 sudo apt install libmikmod-dev libfishsound1-dev libsmpeg-dev liboggz2-dev libflac-dev libfluidsynth-dev
 ```
 
-## Build instructions
+## Contributing
 
 ```sh
 # Before compiling the project you can check if the SDL2 libraries
